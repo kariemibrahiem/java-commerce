@@ -40,10 +40,10 @@ public class StatsServlet extends HttpServlet {
             stats.put("orders", getCount(conn, "orders"));
             stats.put("reviews", getCount(conn, "reviews"));
             
-            resp.getWriter().write(gson.toJson(stats));
-        } catch (SQLException e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\": \"Failed to load stats\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_OK, "Stats loaded successfully", stats);
+        } catch (Exception e) {
+            e.printStackTrace();
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to load stats", null);
         }
     }
 

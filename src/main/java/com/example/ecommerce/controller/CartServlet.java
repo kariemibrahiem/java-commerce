@@ -29,35 +29,26 @@ public class CartServlet extends HttpServlet {
     // View Cart
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
         Integer userId = (Integer) req.getAttribute("userId");
         if (userId == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write("{\"error\": \"Unauthorized\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", null);
             return;
         }
 
         try {
             List<CartItem> cartItems = cartService.getCart(userId);
-            resp.getWriter().write(gson.toJson(cartItems));
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_OK, "Cart retrieved successfully", cartItems);
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\": \"Failed to retrieve cart items.\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to retrieve cart items.", null);
         }
     }
 
     // Add to Cart
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
         Integer userId = (Integer) req.getAttribute("userId");
         if (userId == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write("{\"error\": \"Unauthorized\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", null);
             return;
         }
 
@@ -65,8 +56,7 @@ public class CartServlet extends HttpServlet {
             JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
             
             if (!jsonObject.has("productId")) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("{\"error\": \"productId is required.\"}");
+                com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "productId is required.", null);
                 return;
             }
             
@@ -75,28 +65,21 @@ public class CartServlet extends HttpServlet {
 
             boolean success = cartService.addToCart(userId, productId, quantity);
             if (success) {
-                resp.setStatus(HttpServletResponse.SC_CREATED);
-                resp.getWriter().write("{\"message\": \"Product added to cart successfully.\"}");
+                com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_CREATED, "Product added to cart successfully.", null);
             } else {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("{\"error\": \"Failed to add product to cart.\"}");
+                com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Failed to add product to cart.", null);
             }
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"Invalid request format.\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid request format.", null);
         }
     }
 
     // Delete from Cart (single item or all)
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
         Integer userId = (Integer) req.getAttribute("userId");
         if (userId == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write("{\"error\": \"Unauthorized\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", null);
             return;
         }
 
@@ -108,21 +91,17 @@ public class CartServlet extends HttpServlet {
                 int productId = Integer.parseInt(productIdParam);
                 boolean success = cartService.deleteFromCart(userId, productId);
                 if (success) {
-                    resp.setStatus(HttpServletResponse.SC_OK);
-                    resp.getWriter().write("{\"message\": \"Product removed from cart successfully.\"}");
+                    com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_OK, "Product removed from cart successfully.", null);
                 } else {
-                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    resp.getWriter().write("{\"error\": \"Product not found in cart.\"}");
+                    com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_NOT_FOUND, "Product not found in cart.", null);
                 }
             } else {
                 // Clear entire cart
                 boolean success = cartService.clearCart(userId);
-                resp.setStatus(HttpServletResponse.SC_OK);
-                resp.getWriter().write("{\"message\": \"Cart cleared successfully.\"}");
+                com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_OK, "Cart cleared successfully.", null);
             }
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"Invalid request format.\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid request format.", null);
         }
     }
 }

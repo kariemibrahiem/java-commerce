@@ -95,30 +95,14 @@
               <div class="d-flex gap-3 align-items-center border-dashed border-bottom px-3 py-3">
                 <img src="./assets/images/avatar-1.jpg" alt="" class="avatar avatar-md rounded-circle" />
                 <div>
-                  <h4 class="mb-0 small">Shrina Tesla</h4>
-                  <p class="mb-0  small">@imshrina</p>
+                  <h4 class="mb-0 small" id="profileName">Loading...</h4>
+                  <p class="mb-0 small" id="profileEmail">@loading</p>
                 </div>
               </div>
               <div class="p-3 d-flex flex-column gap-1 small lh-lg">
-                <a href="#!" class="">
-
-                  <span>Home</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Inbox</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Chat</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Activity</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Account Settings</span>
+                <a href="#!" id="logoutBtn" class="text-danger">
+                  <i class="ti ti-logout me-1"></i>
+                  <span> Logout</span>
                 </a>
               </div>
 
@@ -134,29 +118,19 @@
   <aside id="sidebar" class="sidebar">
     <div class="logo-area">
      <a href="index.html" class="d-inline-flex"><img src="data:image/svg+xml,%3csvg%20width='62'%20height='67'%20viewBox='0%200%2062%2067'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M30.604%2066.378L0.00805664%2048.1582V35.7825L30.604%2054.0023V66.378Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2048.1582L30.604%2066.378V54.0023L61.1996%2035.7825V48.1582Z'%20fill='%23E66239'/%3e%3cpath%20d='M30.5955%200L0%2018.2198V30.5955L30.5955%2012.3757V0Z'%20fill='%23657E92'/%3e%3cpath%20d='M61.191%2018.2198L30.5955%200V12.3757L61.191%2030.5955V18.2198Z'%20fill='%23A3B2BE'/%3e%3cpath%20d='M30.604%2048.8457L0.00805664%2030.6259V18.2498L30.604%2036.47V48.8457Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2030.6259L30.604%2048.8457V36.47L61.1996%2018.2498V30.6259Z'%20fill='%23E66239'/%3e%3c/svg%3e" alt="" width="24">
-        <span class="logo-text ms-2 fw-bold fs-4 text-dark">Matrex e-commerce</span>
+        <span class="logo-text ms-2 fw-bold fs-4 text-dark">Matrex</span>
       </a>
     </div>
     <ul class="nav flex-column">
       <li class="px-4 py-2"><small class="nav-text">Main</small></li>
       <li><a class="nav-link active" href="index.html"><i class="ti ti-home"></i><span
             class="nav-text">Dashboard</span></a></li>
-      <li><a class="nav-link" href="users.html"><i class="ti ti-users"></i><span
+      <li id="navUsers"><a class="nav-link" href="users.html"><i class="ti ti-users"></i><span
             class="nav-text">Users</span></a></li>
-      <li><a class="nav-link" href="inventory.html"><i class="ti ti-box-seam"></i><span
+      <li id="navInventory"><a class="nav-link" href="inventory.html"><i class="ti ti-box-seam"></i><span
             class="nav-text">Products</span></a></li>
     <li><a class="nav-link" href="reviews.html"><i class="ti ti-star"></i><span class="nav-text">Reviews</span></a>
       </li>
-    <li><a class="nav-link" href="404-error.html"><i class="ti ti-alert-circle"></i><span class="nav-text">404 Error</span></a>
-      </li>
-      <li><a class="nav-link" href="docs.html"><i class="ti ti-file-text"></i><span class="nav-text">Docs</span></a></li>
-
-
-      <li class="px-4 pt-4 pb-2"><small class="nav-text">Account</small></li>
-      <li><a class="nav-link" href="signin.html"><i class="ti ti-logout"></i><span class="nav-text">Log in</span></a>
-      </li>
-      <li><a class="nav-link" href="signup.html"><i class="ti ti-user-plus"></i><span class="nav-text">Sign
-            up</span></a></li>
     </ul>
 
   </aside>
@@ -167,13 +141,13 @@
       <div class="row ">
         <div class="col-12">
           <div class="mb-6">
-            <h1 class="fs-3 mb-1">Matrex e-commerce Dashboard</h1>
-            <p>Welcome to Matrex e-commerce. Here are the latest statistics:</p>
+            <h1 class="fs-3 mb-1">Matrex Dashboard</h1>
+            <p>Welcome, <span id="welcomeName">User</span>! Here are the latest statistics:</p>
           </div>
         </div>
       </div>
       <div class="row g-3 mb-3">
-        <div class="col-lg-3 col-12">
+        <div class="col-lg-3 col-12" id="cardUsers">
           <div class="card p-4  bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2">
             <div class="d-flex gap-3 ">
               <div class="icon-shape icon-md bg-primary text-white rounded-2">
@@ -230,33 +204,59 @@
       <div class="row">
         <div class="col-12">
           <footer class="text-center py-2 mt-6 text-secondary ">
-            <p class="mb-0">Copyright © 2026 Matrex e-commerce. All rights reserved.</p>
+            <p class="mb-0">Copyright © 2026 Matrex. All rights reserved.</p>
           </footer>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Bootstrap JS -->
-
-
-
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = localStorage.getItem('token');
+
+      if (!user || !token) {
+        window.location.href = 'signin.html';
+        return;
+      }
+
+      // Profile Info
+      document.getElementById('profileName').innerText = user.username;
+      document.getElementById('profileEmail').innerText = user.email;
+      document.getElementById('welcomeName').innerText = user.username;
+
+      // Role-based UI
+      if (user.role !== 'ADMIN') {
+        document.getElementById('navUsers')?.remove();
+        document.getElementById('navInventory')?.remove();
+        document.getElementById('cardUsers')?.remove();
+      }
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = 'signin.html';
+      });
+
       // Fetch Stats
-      fetch('/e_commerce_war_exploded/api/stats')
+      fetch('api/stats', {
+        headers: { 'Authorization': token }
+      })
         .then(res => res.json())
-        .then(stats => {
-          document.getElementById('statsUsers').innerText = stats.users || 0;
-          document.getElementById('statsProducts').innerText = stats.products || 0;
-          document.getElementById('statsOrders').innerText = stats.orders || 0;
-          document.getElementById('statsReviews').innerText = stats.reviews || 0;
+        .then(res => {
+          if (res.status === 200) {
+            const stats = res.data;
+            document.getElementById('statsUsers').innerText = stats.users || 0;
+            document.getElementById('statsProducts').innerText = stats.products || 0;
+            document.getElementById('statsOrders').innerText = stats.orders || 0;
+            document.getElementById('statsReviews').innerText = stats.reviews || 0;
+          }
         })
         .catch(err => console.error("Error loading stats:", err));
-
-
     });
   </script>
+
 </body>
 
 </html>

@@ -26,49 +26,37 @@ public class OrderServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
         Integer userId = (Integer) req.getAttribute("userId");
         if (userId == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write("{\"error\": \"Unauthorized\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", null);
             return;
         }
 
         try {
             List<Order> orders = orderService.getUserOrders(userId);
-            resp.getWriter().write(gson.toJson(orders));
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_OK, "Orders retrieved successfully", orders);
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\": \"Failed to retrieve orders.\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to retrieve orders.", null);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
         Integer userId = (Integer) req.getAttribute("userId");
         if (userId == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write("{\"error\": \"Unauthorized\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", null);
             return;
         }
 
         try {
             Order order = orderService.checkoutCart(userId);
             if (order != null) {
-                resp.setStatus(HttpServletResponse.SC_CREATED);
-                resp.getWriter().write(gson.toJson(order));
+                com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_CREATED, "Order created successfully", order);
             } else {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("{\"error\": \"Cart is empty or checkout failed.\"}");
+                com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Cart is empty or checkout failed.", null);
             }
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().write("{\"error\": \"Failed to create order.\"}");
+            com.example.ecommerce.util.ResponseUtil.sendResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to create order.", null);
         }
     }
 }

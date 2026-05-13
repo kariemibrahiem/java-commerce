@@ -26,15 +26,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static Claims validateToken(String token) {
-        try {
-            return Jwts.parser()
-                    .verifyWith(SECRET_KEY)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-        } catch (Exception e) {
-            return null;
-        }
+    public static Claims validateToken(String token) throws Exception {
+        return Jwts.parser()
+                .verifyWith(SECRET_KEY)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
