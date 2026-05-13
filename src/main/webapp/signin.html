@@ -65,9 +65,36 @@
 
 
 
-  <!-- Bootstrap JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector('form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
+        try {
+          const response = await fetch('api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
 
+          const result = await response.json();
+          if (response.ok) {
+            localStorage.setItem('token', result.data.token);
+            localStorage.setItem('user', JSON.stringify(result.data.user));
+            window.location.href = 'index.html';
+          } else {
+            alert(result.msg || 'Login failed');
+          }
+        } catch (err) {
+          console.error('Login error:', err);
+          alert('An error occurred during login');
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>""

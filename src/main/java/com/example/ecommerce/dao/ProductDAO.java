@@ -14,14 +14,6 @@ import java.util.List;
 public class ProductDAO {
 
     public ProductDAO() {
-        // Ensure reserved_stock column exists
-        String alterSql = "ALTER TABLE products ADD COLUMN reserved_stock INT DEFAULT 0";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(alterSql)) {
-            stmt.execute();
-        } catch (SQLException e) {
-            // Ignore if column already exists
-        }
     }
 
     public List<Product> findAll() {

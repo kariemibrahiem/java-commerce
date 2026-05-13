@@ -95,30 +95,14 @@
               <div class="d-flex gap-3 align-items-center border-dashed border-bottom px-3 py-3">
                 <img src="./assets/images/avatar-1.jpg" alt="" class="avatar avatar-md rounded-circle" />
                 <div>
-                  <h4 class="mb-0 small">Shrina Tesla</h4>
-                  <p class="mb-0  small">@imshrina</p>
+                  <h4 class="mb-0 small" id="profileName">Loading...</h4>
+                  <p class="mb-0 small" id="profileEmail">@loading</p>
                 </div>
               </div>
               <div class="p-3 d-flex flex-column gap-1 small lh-lg">
-                <a href="#!" class="">
-
-                  <span>Home</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Inbox</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Chat</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Activity</span>
-                </a>
-                <a href="#!" class="">
-
-                  <span> Account Settings</span>
+                <a href="#!" id="logoutBtn" class="text-danger">
+                  <i class="ti ti-logout me-1"></i>
+                  <span> Logout</span>
                 </a>
               </div>
 
@@ -134,27 +118,22 @@
   <aside id="sidebar" class="sidebar">
     <div class="logo-area">
      <a href="index.html" class="d-inline-flex"><img src="data:image/svg+xml,%3csvg%20width='62'%20height='67'%20viewBox='0%200%2062%2067'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M30.604%2066.378L0.00805664%2048.1582V35.7825L30.604%2054.0023V66.378Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2048.1582L30.604%2066.378V54.0023L61.1996%2035.7825V48.1582Z'%20fill='%23E66239'/%3e%3cpath%20d='M30.5955%200L0%2018.2198V30.5955L30.5955%2012.3757V0Z'%20fill='%23657E92'/%3e%3cpath%20d='M61.191%2018.2198L30.5955%200V12.3757L61.191%2030.5955V18.2198Z'%20fill='%23A3B2BE'/%3e%3cpath%20d='M30.604%2048.8457L0.00805664%2030.6259V18.2498L30.604%2036.47V48.8457Z'%20fill='%23302C4D'/%3e%3cpath%20d='M61.1996%2030.6259L30.604%2048.8457V36.47L61.1996%2018.2498V30.6259Z'%20fill='%23E66239'/%3e%3c/svg%3e" alt="" width="24">
-        <span class="logo-text ms-2 fw-bold fs-4 text-dark">Matrex e-commerce</span>
+        <span class="logo-text ms-2 fw-bold fs-4 text-dark">Matrex</span>
       </a>
     </div>
     <ul class="nav flex-column">
       <li class="px-4 py-2"><small class="nav-text">Main</small></li>
       <li><a class="nav-link" href="index.html"><i class="ti ti-home"></i><span
             class="nav-text">Dashboard</span></a></li>
-      <li><a class="nav-link active" href="users.html"><i class="ti ti-users"></i><span
+      <li id="navUsers"><a class="nav-link active" href="users.html"><i class="ti ti-users"></i><span
             class="nav-text">Users</span></a></li>
-      <li><a class="nav-link" href="inventory.html"><i class="ti ti-box-seam"></i><span
+      <li id="navInventory"><a class="nav-link" href="inventory.html"><i class="ti ti-box-seam"></i><span
             class="nav-text">Products</span></a></li>
     <li><a class="nav-link" href="reviews.html"><i class="ti ti-star"></i><span class="nav-text">Reviews</span></a>
       </li>
-   
-
-      <li class="px-4 pt-4 pb-2"><small class="nav-text">Account</small></li>
-      <li><a class="nav-link" href="signin.html"><i class="ti ti-logout"></i><span class="nav-text">Log in</span></a>
-      </li>
-      <li><a class="nav-link" href="signup.html"><i class="ti ti-user-plus"></i><span class="nav-text">Sign
-            up</span></a></li>
     </ul>
+
+  </aside>
 
   </aside>
 
@@ -251,16 +230,34 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    let currentUsers = [];
-    let userModalInstance = null;
-
     document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = localStorage.getItem('token');
+
+      if (!user || !token || user.role !== 'ADMIN') {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Profile Info
+      document.getElementById('profileName').innerText = user.username;
+      document.getElementById('profileEmail').innerText = user.email;
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = 'signin.html';
+      });
+
       userModalInstance = new bootstrap.Modal(document.getElementById('userModal'));
       loadUsers();
     });
 
     function loadUsers() {
-      fetch('/e_commerce_war_exploded/api/users')
+      const token = localStorage.getItem('token');
+      fetch('api/users', {
+        headers: { 'Authorization': token }
+      })
         .then(res => res.json())
         .then(response => {
           const tbody = document.getElementById('usersTableBody');
@@ -317,6 +314,7 @@
     }
 
     function saveUser() {
+      const token = localStorage.getItem('token');
       const id = document.getElementById('userId').value;
       const user = {
         username: document.getElementById('userName').value,
@@ -325,7 +323,7 @@
       };
 
       let method = 'POST';
-      let url = '/e_commerce_war_exploded/api/users';
+      let url = 'api/users';
 
       if (id) {
         method = 'PUT';
@@ -337,7 +335,10 @@
 
       fetch(url, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': token
+        },
         body: JSON.stringify(user)
       })
       .then(res => res.json())
@@ -346,7 +347,7 @@
           userModalInstance.hide();
           loadUsers();
         } else {
-          alert('Error: ' + res.message);
+          alert('Error: ' + res.msg);
         }
       })
       .catch(err => alert('Failed to save user'));
@@ -354,13 +355,17 @@
 
     function deleteUser(id) {
       if (!confirm('Are you sure you want to delete this user?')) return;
-      fetch('/e_commerce_war_exploded/api/users/' + id, { method: 'DELETE' })
+      const token = localStorage.getItem('token');
+      fetch('api/users/' + id, { 
+        method: 'DELETE',
+        headers: { 'Authorization': token }
+      })
         .then(res => res.json())
         .then(res => {
           if (res.status === 200) {
             loadUsers();
           } else {
-            alert('Error: ' + res.message);
+            alert('Error: ' + res.msg);
           }
         })
         .catch(err => alert('Failed to delete user'));

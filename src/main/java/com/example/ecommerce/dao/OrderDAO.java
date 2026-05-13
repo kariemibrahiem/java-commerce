@@ -74,16 +74,18 @@ public class OrderDAO {
                 stmt.executeBatch();
             }
 
-            // 3.5 Commit reserved stock
-            String commitStockSql = "UPDATE products SET reserved_stock = reserved_stock - ? WHERE id = ? AND reserved_stock >= ?";
-            try (PreparedStatement stmt = conn.prepareStatement(commitStockSql)) {
+            // 3.5 Update product stock
+            String updateStockSql = "UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?";
+            try (PreparedStatement stmt = conn.prepareStatement(updateStockSql)) {
                 for (OrderItem item : tempItems) {
                     stmt.setInt(1, item.getQuantity());
                     stmt.setInt(2, item.getProductId());
                     stmt.setInt(3, item.getQuantity());
-                    stmt.addBatch();
+                    int affected = stmt.executeUpdate();
+                    if (affected == 0) {
+                        throw new SQLException("Insufficient stock for product ID: " + item.getProductId());
+                    }
                 }
-                stmt.executeBatch();
             }
 
             // 4. Clear Cart
